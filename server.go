@@ -35,7 +35,6 @@ func serve() {
 }
 
 func initRoutes(e *echo.Echo, c controller.EmpController) {
-
 	g := e.Group("/go-echo-yudi")
 	g.GET(utility.APIGet, c.GetEmployees)
 	g.POST(utility.APICreate, c.CreateEmployee)

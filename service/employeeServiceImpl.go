@@ -28,3 +28,8 @@ func (s GetEmployee) CreateEmp(empRequest model.EmployeeRequest, repo interfaces
 	err = repo.InsertEmployee(empRequest)
 	return err
 }
+
+func (s GetEmployee) GetEmployeeByName(name string, repo interfaces.EmployeeRepository) (res model.Employees, err error) {
+	res, err = repo.GetEmployeeByName(name)
+	return res, err
+}

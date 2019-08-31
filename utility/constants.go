@@ -9,4 +9,5 @@ const (
 	APIGet          string = "/employee"
 	APIUpdate       string = "/employee/update/:id"
 	APIDelete       string = "/employee/delete/:name"
+	APIGetByName    string = "/employee/:name"
 )

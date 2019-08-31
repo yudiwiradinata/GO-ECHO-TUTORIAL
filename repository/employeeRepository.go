@@ -96,3 +96,24 @@ func (e GetEmployeeRepo) GetEmployee() (res model.Employees, err error) {
 	}
 	return result, err
 }
+
+func (e GetEmployeeRepo) GetEmployeeByName(name string) (res model.Employees, err error) {
+	con = db.CreateConn()
+	sqlStatement := squirrel.Select("id", "employee_name", "employee_age", "employee_salary").From("employee").
+		Where("employee_name = ?", name).OrderBy("id")
+	rows, err := sqlStatement.RunWith(con).Query()
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+	result := model.Employees{}
+	for rows.Next() {
+		employee := model.Employee{}
+		err2 := rows.Scan(&employee.Id, &employee.Name, &employee.Age, &employee.Salary)
+		if err2 != nil {
+			fmt.Print(err2)
+		}
+		result.Employees = append(result.Employees, employee)
+	}
+	return result, err
+}

@@ -10,6 +10,7 @@ require (
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0 // indirect
+	go.uber.org/dig v1.7.0
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
 )

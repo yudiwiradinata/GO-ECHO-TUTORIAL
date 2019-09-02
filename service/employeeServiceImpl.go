@@ -1,35 +1,60 @@
 package service
 
 import (
-	"GO-ECHO-TUTORIAL/interfaces"
 	"GO-ECHO-TUTORIAL/model"
+
+	"GO-ECHO-TUTORIAL/repository"
 )
 
-type GetEmployee struct {
+type employeeService struct {
+	repository repository.EmployeeRepo
 }
 
-func (s GetEmployee) GetEmp(repo interfaces.EmployeeRepository) (res model.Employees, err error) {
+//EmployeeService - api
+type Employee interface {
+	GetEmp(repo repository.EmployeeRepo) (res model.Employees, err error)
+	GetEmployeeByName(name string, repo repository.EmployeeRepo) (res model.Employees, err error)
+	CreateEmp(empRequest model.EmployeeRequest, repo repository.EmployeeRepo) (err error)
+	DeleteEmp(name string, repo repository.EmployeeRepo) (bool, error)
+	UpdateEmp(id string, empRequest model.EmployeeRequest, repo repository.EmployeeRepo) (bool, error)
+}
+
+func NewEmployee(repository repository.EmployeeRepo) Employee {
+	return &employeeService{
+		repository: repository,
+	}
+}
+
+func NewEmployeeService(repository repository.EmployeeRepo) *employeeService {
+	return &employeeService{repository: repository}
+}
+
+//GetEmp - get
+func (s employeeService) GetEmp(repo repository.EmployeeRepo) (res model.Employees, err error) {
 	res, err = repo.GetEmployee()
 	return res, err
 }
 
-func (s GetEmployee) DeleteEmp(name string, repo interfaces.EmployeeRepository) (bool, error) {
+//DeleteEmp - delete
+func (s employeeService) DeleteEmp(name string, repo repository.EmployeeRepo) (bool, error) {
 	res, err := repo.DeleteEmployee(name)
 	return res, err
 }
 
 //UpdateEmp - update
-func (s GetEmployee) UpdateEmp(id string, empRequest model.EmployeeRequest, repo interfaces.EmployeeRepository) (bool, error) {
+func (s employeeService) UpdateEmp(id string, empRequest model.EmployeeRequest, repo repository.EmployeeRepo) (bool, error) {
 	res, err := repo.UpdateEmployee(id, empRequest)
 	return res, err
 }
 
-func (s GetEmployee) CreateEmp(empRequest model.EmployeeRequest, repo interfaces.EmployeeRepository) (err error) {
+//CreateEmp - create
+func (s employeeService) CreateEmp(empRequest model.EmployeeRequest, repo repository.EmployeeRepo) (err error) {
 	err = repo.InsertEmployee(empRequest)
 	return err
 }
 
-func (s GetEmployee) GetEmployeeByName(name string, repo interfaces.EmployeeRepository) (res model.Employees, err error) {
+//GetEmployeeByName - get
+func (s employeeService) GetEmployeeByName(name string, repo repository.EmployeeRepo) (res model.Employees, err error) {
 	res, err = repo.GetEmployeeByName(name)
 	return res, err
 }

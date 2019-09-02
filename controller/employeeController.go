@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"GO-ECHO-TUTORIAL/interfaces"
 	"GO-ECHO-TUTORIAL/model"
+	"GO-ECHO-TUTORIAL/repository"
+	"GO-ECHO-TUTORIAL/service"
 	"GO-ECHO-TUTORIAL/utility"
 	"net/http"
 
@@ -12,13 +13,20 @@ import (
 var response = model.BaseResponse{}
 
 //EmpController struct
-type EmpController struct {
-	EmpService interfaces.EmployeeService
-	EmpRepo    interfaces.EmployeeRepository
+type EmployeeController struct {
+	EmpService service.Employee
+	EmpRepo    repository.EmployeeRepo
+}
+
+func NewEmployeeController(
+	EmpService service.Employee,
+	EmpRepo repository.EmployeeRepo) *EmployeeController {
+	return &EmployeeController{EmpService: EmpService,
+		EmpRepo: EmpRepo}
 }
 
 //GetEmployees - get All employee
-func (e EmpController) GetEmployees(c echo.Context) error {
+func (e EmployeeController) GetEmployees(c echo.Context) error {
 	result, err := e.EmpService.GetEmp(e.EmpRepo)
 	if err != nil {
 		response.Code = utility.CodeFailed
@@ -34,8 +42,9 @@ func (e EmpController) GetEmployees(c echo.Context) error {
 }
 
 //GetEmployeeByName - get All employee
-func (e EmpController) GetEmployeeByName(c echo.Context) error {
+func (e EmployeeController) GetEmployeeByName(c echo.Context) error {
 	name := c.Param("name")
+
 	result, err := e.EmpService.GetEmployeeByName(name, e.EmpRepo)
 	if err != nil {
 		response.Code = utility.CodeFailed
@@ -51,7 +60,7 @@ func (e EmpController) GetEmployeeByName(c echo.Context) error {
 }
 
 //CreateEmployee d
-func (e EmpController) CreateEmployee(c echo.Context) error {
+func (e EmployeeController) CreateEmployee(c echo.Context) error {
 	emp := new(model.EmployeeRequest)
 	if err := c.Bind(emp); err != nil {
 		return err
@@ -73,7 +82,7 @@ func (e EmpController) CreateEmployee(c echo.Context) error {
 }
 
 //UpdateEmployee d
-func (e EmpController) UpdateEmployee(c echo.Context) error {
+func (e EmployeeController) UpdateEmployee(c echo.Context) error {
 	emp := new(model.EmployeeRequest)
 	id := c.Param("id")
 	if err := c.Bind(emp); err != nil {
@@ -95,7 +104,7 @@ func (e EmpController) UpdateEmployee(c echo.Context) error {
 }
 
 //DeleteEmployee d
-func (e EmpController) DeleteEmployee(c echo.Context) error {
+func (e EmployeeController) DeleteEmployee(c echo.Context) error {
 	name := c.Param("name")
 	res, err := e.EmpService.DeleteEmp(name, e.EmpRepo)
 

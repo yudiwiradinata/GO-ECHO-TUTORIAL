@@ -10,7 +10,7 @@ type employeeService struct {
 	repository repository.EmployeeRepo
 }
 
-//EmployeeService - api
+//Employee - interface
 type Employee interface {
 	GetEmp(repo repository.EmployeeRepo) (res model.Employees, err error)
 	GetEmployeeByName(name string, repo repository.EmployeeRepo) (res model.Employees, err error)

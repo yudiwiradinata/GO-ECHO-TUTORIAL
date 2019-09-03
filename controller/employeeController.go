@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"go.uber.org/dig"
 )
 
 var response = model.BaseResponse{}
@@ -18,11 +19,16 @@ type EmployeeController struct {
 	EmpRepo    repository.EmployeeRepo
 }
 
+type HParams struct {
+	dig.In
+	EmpService service.Employee
+	EmpRepo    repository.EmployeeRepo
+}
+
 func NewEmployeeController(
-	EmpService service.Employee,
-	EmpRepo repository.EmployeeRepo) *EmployeeController {
-	return &EmployeeController{EmpService: EmpService,
-		EmpRepo: EmpRepo}
+	h HParams) *EmployeeController {
+	return &EmployeeController{EmpService: h.EmpService,
+		EmpRepo: h.EmpRepo}
 }
 
 //GetEmployees - get All employee

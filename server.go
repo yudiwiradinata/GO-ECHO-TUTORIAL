@@ -64,11 +64,11 @@ func BuildContainer() *dig.Container {
 
 	container.Provide(NewConfig)
 	container.Provide(ConnectDatabase)
-	container.Provide(repository.NewEmployeeRepository)
-	container.Provide(service.NewEmployeeService)
+	//container.Provide(repository.NewEmployeeRepository)
+	//container.Provide(service.NewEmployeeService)
 	container.Provide(NewServer)
-	container.Provide(repository.NewEmployeeRepo)
-	container.Provide(service.NewEmployee)
+	container.Provide(repository.NewEmployeeRepositoryInterface)
+	container.Provide(service.NewEmployeeServiceInterface)
 	container.Provide(controller.NewEmployeeController)
 
 	return container

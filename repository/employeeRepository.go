@@ -8,31 +8,31 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-type EmployeeRepository struct {
+type employeeRepository struct {
 	database *sql.DB
 }
 
-func NewEmployeeRepository(database *sql.DB) *EmployeeRepository {
-	return &EmployeeRepository{database: database}
+func NewEmployeeRepository(database *sql.DB) *employeeRepository {
+	return &employeeRepository{database: database}
 }
 
-//EmployeeRepo - api
-type EmployeeRepo interface {
-	GetEmployee() (res model.Employees, err error)
-	GetEmployeeByName(name string) (res model.Employees, err error)
+//EmployeeRepositoryInterface - api
+type EmployeeRepositoryInterface interface {
+	GetEmployee() (res *model.Employees, err error)
+	GetEmployeeByName(name string) (res *model.Employees, err error)
 	InsertEmployee(req model.EmployeeRequest) (err error)
 	UpdateEmployee(id string, req model.EmployeeRequest) (bool, error)
 	DeleteEmployee(name string) (bool, error)
 }
 
-func NewEmployeeRepo(con *sql.DB) EmployeeRepo {
-	return &EmployeeRepository{
+func NewEmployeeRepositoryInterface(con *sql.DB) EmployeeRepositoryInterface {
+	return &employeeRepository{
 		database: con,
 	}
 }
 
 //DeleteEmployee - delete
-func (e EmployeeRepository) DeleteEmployee(name string) (bool, error) {
+func (e employeeRepository) DeleteEmployee(name string) (bool, error) {
 	sqlStatement := sq.Delete("employee").Where("employee_name = ?", name)
 	sql, args, err := sqlStatement.ToSql()
 	res, err := e.database.Exec(sql, args[0])
@@ -50,7 +50,7 @@ func (e EmployeeRepository) DeleteEmployee(name string) (bool, error) {
 }
 
 //UpdateEmployee - update
-func (e EmployeeRepository) UpdateEmployee(id string, req model.EmployeeRequest) (bool, error) {
+func (e employeeRepository) UpdateEmployee(id string, req model.EmployeeRequest) (bool, error) {
 	//con = db.CreateConn()
 	//sqlStatement := "UPDATE employee SET employee_name = ?,employee_age = ?, employee_salary=? WHERE id=?"
 	//res, err := con.Exec(sqlStatement, req.Name, req.Age, req.Salary, id)
@@ -73,7 +73,7 @@ func (e EmployeeRepository) UpdateEmployee(id string, req model.EmployeeRequest)
 }
 
 //InsertEmployee - insert
-func (e EmployeeRepository) InsertEmployee(req model.EmployeeRequest) (err error) {
+func (e employeeRepository) InsertEmployee(req model.EmployeeRequest) (err error) {
 	//con = db.CreateConn()
 	//sqlStatement := "INSERT INTO employee (employee_name, employee_age, employee_salary) VALUES (?,?,?)"
 	//_, err = con.Exec(sqlStatement, req.Name, req.Age, req.Salary)
@@ -90,7 +90,7 @@ func (e EmployeeRepository) InsertEmployee(req model.EmployeeRequest) (err error
 }
 
 //GetEmployee - getAll
-func (e EmployeeRepository) GetEmployee() (res model.Employees, err error) {
+func (e employeeRepository) GetEmployee() (res *model.Employees, err error) {
 	//con = db.CreateConn()
 	//sqlStatement := "SELECT id,employee_name, employee_age, employee_salary FROM employee order by id"
 	//rows, err := con.Query(sqlStatement)
@@ -110,11 +110,11 @@ func (e EmployeeRepository) GetEmployee() (res model.Employees, err error) {
 		}
 		result.Employees = append(result.Employees, employee)
 	}
-	return result, err
+	return &result, err
 }
 
 //GetEmployeeByName - emp by name
-func (e EmployeeRepository) GetEmployeeByName(name string) (res model.Employees, err error) {
+func (e employeeRepository) GetEmployeeByName(name string) (res *model.Employees, err error) {
 	//con = db.CreateConn()
 	sqlStatement := sq.Select("id", "employee_name", "employee_age", "employee_salary").From("employee").
 		Where("employee_name = ?", name).OrderBy("id")
@@ -132,5 +132,5 @@ func (e EmployeeRepository) GetEmployeeByName(name string) (res model.Employees,
 		}
 		result.Employees = append(result.Employees, employee)
 	}
-	return result, err
+	return &result, err
 }

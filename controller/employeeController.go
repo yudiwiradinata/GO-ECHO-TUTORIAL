@@ -15,14 +15,14 @@ var response = model.BaseResponse{}
 
 //EmpController struct
 type EmployeeController struct {
-	EmpService service.Employee
-	EmpRepo    repository.EmployeeRepo
+	EmpService service.EmployeeServiceInterface
+	EmpRepo    repository.EmployeeRepositoryInterface
 }
 
 type HParams struct {
 	dig.In
-	EmpService service.Employee
-	EmpRepo    repository.EmployeeRepo
+	EmpService service.EmployeeServiceInterface
+	EmpRepo    repository.EmployeeRepositoryInterface
 }
 
 func NewEmployeeController(
@@ -33,7 +33,7 @@ func NewEmployeeController(
 
 //GetEmployees - get All employee
 func (e EmployeeController) GetEmployees(c echo.Context) error {
-	result, err := e.EmpService.GetEmp(e.EmpRepo)
+	result, err := e.EmpService.GetEmp()
 	if err != nil {
 		response.Code = utility.CodeFailed
 		response.Message = utility.ResponseFailed
@@ -51,7 +51,7 @@ func (e EmployeeController) GetEmployees(c echo.Context) error {
 func (e EmployeeController) GetEmployeeByName(c echo.Context) error {
 	name := c.Param("name")
 
-	result, err := e.EmpService.GetEmployeeByName(name, e.EmpRepo)
+	result, err := e.EmpService.GetEmployeeByName(name)
 	if err != nil {
 		response.Code = utility.CodeFailed
 		response.Message = utility.ResponseFailed
@@ -72,7 +72,7 @@ func (e EmployeeController) CreateEmployee(c echo.Context) error {
 		return err
 	}
 
-	err := e.EmpService.CreateEmp(*emp, e.EmpRepo)
+	err := e.EmpService.CreateEmp(*emp)
 
 	if err != nil {
 		response.Code = utility.CodeFailed
@@ -94,7 +94,7 @@ func (e EmployeeController) UpdateEmployee(c echo.Context) error {
 	if err := c.Bind(emp); err != nil {
 		return err
 	}
-	res, err := e.EmpService.UpdateEmp(id, *emp, e.EmpRepo)
+	res, err := e.EmpService.UpdateEmp(id, *emp)
 
 	if err != nil {
 		response.Code = utility.CodeFailed
@@ -112,7 +112,7 @@ func (e EmployeeController) UpdateEmployee(c echo.Context) error {
 //DeleteEmployee d
 func (e EmployeeController) DeleteEmployee(c echo.Context) error {
 	name := c.Param("name")
-	res, err := e.EmpService.DeleteEmp(name, e.EmpRepo)
+	res, err := e.EmpService.DeleteEmp(name)
 
 	if err != nil {
 		response.Code = utility.CodeFailed

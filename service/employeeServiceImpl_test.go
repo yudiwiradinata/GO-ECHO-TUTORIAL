@@ -16,6 +16,11 @@ func TestGetEmployeeByName(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
+	empRequest := model.EmployeeRequest{
+		Name:   "yudi",
+		Salary: "1000",
+		Age:    "10",
+	}
 	empReturn := model.Employee{
 		Name:   "yudi",
 		Id:     "1",
@@ -60,4 +65,37 @@ func TestGetEmployeeByName(t *testing.T) {
 		})
 	})
 
+	t.Run("GIVEN CreateEmp ", func(t *testing.T) {
+		t.Run("When error", func(t *testing.T) {
+			mockRepo.EXPECT().InsertEmployee(empRequest).Return(errors.New("error"))
+			err := empServiceMock.CreateEmp(empRequest)
+			require.EqualError(t, err, "error")
+		})
+
+		t.Run("When success", func(t *testing.T) {
+			mockRepo.EXPECT().InsertEmployee(empRequest).Return(nil)
+			err := empServiceMock.CreateEmp(empRequest)
+			require.Equal(t, nil, err)
+		})
+	})
+
+	t.Run("GIVEN DeleteEmp ", func(t *testing.T) {
+		t.Run("When error", func(t *testing.T) {
+			mockRepo.EXPECT().DeleteEmployee(empRequest.Name).Return(false, errors.New("error"))
+			_, err := empServiceMock.DeleteEmp(empRequest.Name)
+			require.EqualError(t, err, "error")
+		})
+
+		t.Run("When success", func(t *testing.T) {
+			mockRepo.EXPECT().DeleteEmployee(empRequest.Name).Return(true, nil)
+			res, _ := empServiceMock.DeleteEmp(empRequest.Name)
+			require.Equal(t, true, res)
+		})
+	})
+
+	/*
+		CreateEmp(empRequest model.EmployeeRequest) (err error)
+		DeleteEmp(name string) (bool, error)
+		UpdateEmp(id string, empRequest model.EmployeeRequest) (bool, error)
+	*/
 }

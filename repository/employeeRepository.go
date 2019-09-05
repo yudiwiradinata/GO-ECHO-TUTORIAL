@@ -12,19 +12,17 @@ type employeeRepository struct {
 	database *sql.DB
 }
 
-func NewEmployeeRepository(database *sql.DB) *employeeRepository {
-	return &employeeRepository{database: database}
-}
-
 //EmployeeRepositoryInterface - api
 type EmployeeRepositoryInterface interface {
 	GetEmployee() (res *model.Employees, err error)
 	GetEmployeeByName(name string) (res *model.Employees, err error)
-	InsertEmployee(req model.EmployeeRequest) (err error)
+	GetEmployeeByID(id int64) (res *model.Employee, err error)
+	InsertEmployee(req model.EmployeeRequest) (res *model.Employee, err error)
 	UpdateEmployee(id string, req model.EmployeeRequest) (bool, error)
 	DeleteEmployee(name string) (bool, error)
 }
 
+//NewEmployeeRepositoryInterface -
 func NewEmployeeRepositoryInterface(con *sql.DB) EmployeeRepositoryInterface {
 	return &employeeRepository{
 		database: con,
@@ -56,8 +54,6 @@ func (e employeeRepository) UpdateEmployee(id string, req model.EmployeeRequest)
 	//res, err := con.Exec(sqlStatement, req.Name, req.Age, req.Salary, id)
 	sqlStatement := sq.Update("employee").Set("employee_name", req.Name).Set("employee_age", req.Age).Set("employee_salary", req.Salary).Where("id= ?", id)
 	sql, args, err := sqlStatement.ToSql()
-	fmt.Println(sql)
-	fmt.Println(args)
 	res, err := e.database.Exec(sql, args[0], args[1], args[2], args[3])
 	if err != nil {
 		return false, err
@@ -72,8 +68,28 @@ func (e employeeRepository) UpdateEmployee(id string, req model.EmployeeRequest)
 	return false, err
 }
 
+//GetEmployeeById - emp by id
+func (e employeeRepository) GetEmployeeByID(id int64) (res *model.Employee, err error) {
+	//con = db.CreateConn()
+	sqlStatement := sq.Select("id", "employee_name", "employee_age", "employee_salary").From("employee").
+		Where("id = ?", id).OrderBy("id")
+	rows, err := sqlStatement.RunWith(e.database).Query()
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+	employee := model.Employee{}
+	for rows.Next() {
+		err2 := rows.Scan(&employee.Id, &employee.Name, &employee.Age, &employee.Salary)
+		if err2 != nil {
+			fmt.Print(err2)
+		}
+	}
+	return &employee, err
+}
+
 //InsertEmployee - insert
-func (e employeeRepository) InsertEmployee(req model.EmployeeRequest) (err error) {
+func (e employeeRepository) InsertEmployee(req model.EmployeeRequest) (res *model.Employee, err error) {
 	//con = db.CreateConn()
 	//sqlStatement := "INSERT INTO employee (employee_name, employee_age, employee_salary) VALUES (?,?,?)"
 	//_, err = con.Exec(sqlStatement, req.Name, req.Age, req.Salary)
@@ -81,12 +97,12 @@ func (e employeeRepository) InsertEmployee(req model.EmployeeRequest) (err error
 		req.Name, req.Age, req.Salary,
 	).RunWith(e.database)
 
-	_, err = sqlStatement.Exec()
+	id, err := sqlStatement.Exec()
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	return err
+	idd, _ := id.LastInsertId()
+	return e.GetEmployeeByID(idd)
 }
 
 //GetEmployee - getAll

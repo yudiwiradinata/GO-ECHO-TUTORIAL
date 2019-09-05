@@ -10,4 +10,6 @@ const (
 	APIUpdate       string = "/employee/update/:id"
 	APIDelete       string = "/employee/delete/:name"
 	APIGetByName    string = "/employee/:name"
+	RedisKey        string = "KEY_EMP"
+	EmptyString     string = ""
 )

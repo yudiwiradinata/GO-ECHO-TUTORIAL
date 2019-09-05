@@ -19,14 +19,14 @@ type EmployeeController struct {
 	EmpRepo    repository.EmployeeRepositoryInterface
 }
 
-type HParams struct {
+type empCtrlParams struct {
 	dig.In
 	EmpService service.EmployeeServiceInterface
 	EmpRepo    repository.EmployeeRepositoryInterface
 }
 
 func NewEmployeeController(
-	h HParams) *EmployeeController {
+	h empCtrlParams) *EmployeeController {
 	return &EmployeeController{EmpService: h.EmpService,
 		EmpRepo: h.EmpRepo}
 }

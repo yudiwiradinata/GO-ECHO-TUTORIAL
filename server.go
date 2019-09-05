@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
+	"github.com/go-redis/redis"
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/labstack/echo"
@@ -18,12 +20,16 @@ import (
 type Config struct {
 	DataSourceName string
 	DriverName     string
+	URLRedis       string
+	PasswordRedis  string
 }
 
 func NewConfig() *Config {
 	return &Config{
 		DataSourceName: "root:123456@tcp(localhost:3306)/test",
 		DriverName:     "mysql",
+		URLRedis:       "localhost:6379",
+		PasswordRedis:  "",
 	}
 }
 
@@ -59,6 +65,20 @@ func ConnectDatabase(config *Config) (*sql.DB, error) {
 	return sql.Open(config.DriverName, config.DataSourceName)
 }
 
+func NewRedisCLient(config *Config) *redis.Client {
+	client := redis.NewClient(&redis.Options{
+		Addr:     config.URLRedis,
+		Password: config.PasswordRedis, // no password set
+		DB:       0,                    // use default DB
+	})
+
+	pong, _ := client.Ping().Result()
+	fmt.Println(pong)
+
+	return client
+
+}
+
 func BuildContainer() *dig.Container {
 	container := dig.New()
 
@@ -68,6 +88,8 @@ func BuildContainer() *dig.Container {
 	//container.Provide(service.NewEmployeeService)
 	container.Provide(NewServer)
 	container.Provide(repository.NewEmployeeRepositoryInterface)
+	container.Provide(NewRedisCLient)
+	container.Provide(service.NewCacheServiceInterface)
 	container.Provide(service.NewEmployeeServiceInterface)
 	container.Provide(controller.NewEmployeeController)
 

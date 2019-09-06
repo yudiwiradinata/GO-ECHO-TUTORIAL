@@ -6,8 +6,9 @@ package mock
 
 import (
 	model "GO-ECHO-TUTORIAL/model"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockEmployeeRepositoryInterface is a mock of EmployeeRepositoryInterface interface
@@ -63,6 +64,21 @@ func (mr *MockEmployeeRepositoryInterfaceMockRecorder) GetEmployee() *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEmployee", reflect.TypeOf((*MockEmployeeRepositoryInterface)(nil).GetEmployee))
 }
 
+// GetEmployeeByID mocks base method
+func (m *MockEmployeeRepositoryInterface) GetEmployeeByID(arg0 int64) (*model.Employee, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEmployeeByID", arg0)
+	ret0, _ := ret[0].(*model.Employee)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEmployeeByID indicates an expected call of GetEmployeeByID
+func (mr *MockEmployeeRepositoryInterfaceMockRecorder) GetEmployeeByID(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEmployeeByID", reflect.TypeOf((*MockEmployeeRepositoryInterface)(nil).GetEmployeeByID), arg0)
+}
+
 // GetEmployeeByName mocks base method
 func (m *MockEmployeeRepositoryInterface) GetEmployeeByName(arg0 string) (*model.Employees, error) {
 	m.ctrl.T.Helper()
@@ -79,11 +95,12 @@ func (mr *MockEmployeeRepositoryInterfaceMockRecorder) GetEmployeeByName(arg0 in
 }
 
 // InsertEmployee mocks base method
-func (m *MockEmployeeRepositoryInterface) InsertEmployee(arg0 model.EmployeeRequest) error {
+func (m *MockEmployeeRepositoryInterface) InsertEmployee(arg0 model.EmployeeRequest) (*model.Employee, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertEmployee", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*model.Employee)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // InsertEmployee indicates an expected call of InsertEmployee

@@ -14,7 +14,7 @@ type employeeService struct {
 	cache      CacheServiceInterface
 }
 
-type empServiceParams struct {
+type EmpServiceParams struct {
 	dig.In
 
 	Repository repository.EmployeeRepositoryInterface
@@ -31,7 +31,7 @@ type EmployeeServiceInterface interface {
 }
 
 //NewEmployeeServiceInterface -
-func NewEmployeeServiceInterface(h empServiceParams) EmployeeServiceInterface {
+func NewEmployeeServiceInterface(h EmpServiceParams) EmployeeServiceInterface {
 	return &employeeService{
 		repository: h.Repository,
 		cache:      h.Cache,
@@ -73,8 +73,10 @@ func (s employeeService) GetEmployeeByName(name string) (res *model.Employees, e
 	var emp model.Employee
 	err = s.cache.FindCache(key, &emp)
 	if err != nil {
-		res, err = s.repository.GetEmployeeByName(name)
-		s.cache.CreateCache(utility.CreateKeyRedis(name), res.Employees[0], 0)
+		res, err := s.repository.GetEmployeeByName(name)
+		if res != nil {
+			s.cache.CreateCache(utility.CreateKeyRedis(name), res.Employees[0], 0)
+		}
 		return res, err
 	}
 	var empS []model.Employee
